@@ -551,7 +551,7 @@ $("#fileInput").addEventListener("change",ev=>{
 });
 async function init(){
   try{
-    const res=await fetch("content.csv",{cache:"no-store"});
+    const res=await fetch("content.csv?v="+Date.now(),{cache:"no-store"});
     if(!res.ok) throw 0;
     seat(toRecords(parseCSV(await res.text())));
   }catch(e){ renderNeedsFile(); }
