@@ -1,20 +1,572 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script>
-      const cacheBust = 'cache-bust';
-      const pageUrl = new URL(window.location.href);
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oscar Manuel Heller</title>
+<style>
+  :root{
+    --navy:#0A2540;        /* deep corporate navy — headings, status band */
+    --blue:#175E9E;        /* primary blue */
+    --blue-2:#2E77B8;      /* brighter blue — links, accents */
+    --blue-soft:#EAF1F8;   /* pale blue tint */
+    --bg:#F3F6FA;          /* cool page background */
+    --panel:#FFFFFF;
+    --ink:#14212E;
+    --muted:#5C6B7A;
+    --line:#D6E0EC;
+    --line-strong:#B9C8DA;
+    --serif:Georgia,"Times New Roman","Nimbus Roman",serif;
+    --shadow:0 8px 26px -18px rgba(10,37,64,.45);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:var(--serif);font-size:17px;line-height:1.6;
+  }
+  a{color:var(--blue-2);text-decoration:none}
+  a:hover{text-decoration:underline}
 
-      if (!pageUrl.searchParams.has(cacheBust)) {
-        pageUrl.searchParams.set(cacheBust, Date.now().toString());
-        window.location.replace(pageUrl.href);
-      }
-    </script>
-    <title>Hello World</title>
-  </head>
-  <body>
-    <h1>Hello, world!</h1>
-  </body>
+  /* editorial "masthead" eyebrow — Georgia in letter-spaced small caps */
+  .eyebrow{
+    font-variant:small-caps;letter-spacing:.14em;font-weight:700;
+    font-size:13px;color:var(--blue);margin:0;
+  }
+
+  /* ---------- top identity bar ---------- */
+  .topbar{
+    background:var(--panel);border-bottom:1px solid var(--line);
+    position:sticky;top:0;z-index:40;
+  }
+  .topbar .inner{
+    max-width:1180px;margin:0 auto;padding:14px 24px;
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+  }
+  .brand{font-weight:700;font-size:20px;letter-spacing:-.01em;color:var(--navy)}
+  .brand small{font-weight:400;font-size:14px;color:var(--muted);font-variant:small-caps;letter-spacing:.08em;margin-left:8px}
+  .contacts{display:flex;gap:10px}
+  .contacts a{
+    width:36px;height:36px;border-radius:9px;background:var(--blue);
+    display:flex;align-items:center;justify-content:center;
+    transition:background .15s ease, transform .15s ease;
+  }
+  .contacts a:hover{background:var(--navy);transform:translateY(-1px);text-decoration:none}
+  .contacts svg{width:19px;height:19px;fill:#fff}
+  .contacts text{fill:#fff;font-family:var(--serif);font-weight:700}
+
+  /* ---------- database toolbar ---------- */
+  .toolbar{background:var(--panel);border-bottom:1px solid var(--line)}
+  .toolbar .inner{
+    max-width:1180px;margin:0 auto;padding:10px 24px;
+    display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  }
+  .crumb{font-size:14px;color:var(--muted)}
+  .crumb b{color:var(--navy)}
+  .controls{display:flex;align-items:center;gap:8px}
+  .menu{position:relative}
+  .ctl{
+    font-family:var(--serif);font-size:14px;color:var(--navy);
+    background:var(--panel);border:1px solid var(--line-strong);border-radius:8px;
+    padding:7px 12px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;
+  }
+  .ctl:hover{border-color:var(--blue)}
+  .ctl .car{font-size:11px;color:var(--muted)}
+  .ctl.icon{padding:7px 9px}
+  .ctl.icon svg{width:16px;height:16px;fill:var(--navy)}
+  .pop{
+    position:absolute;right:0;top:calc(100% + 6px);z-index:50;
+    background:var(--panel);border:1px solid var(--line-strong);border-radius:10px;
+    box-shadow:var(--shadow);min-width:210px;padding:6px;display:none;
+  }
+  .pop.open{display:block}
+  .pop .label{font-size:11px;font-variant:small-caps;letter-spacing:.12em;color:var(--muted);padding:8px 10px 4px}
+  .pop button{
+    width:100%;text-align:left;font-family:var(--serif);font-size:14px;color:var(--ink);
+    background:none;border:0;border-radius:7px;padding:8px 10px;cursor:pointer;display:block;
+  }
+  .pop button:hover{background:var(--blue-soft)}
+  .pop button[aria-checked="true"]{color:var(--blue);font-weight:700}
+  .pop button .hint{display:block;font-size:12px;color:var(--muted);font-weight:400}
+
+  /* ---------- panes ---------- */
+  .panes{max-width:1180px;margin:0 auto;padding:26px 24px 60px;
+    display:grid;grid-template-columns:344px 1fr;gap:28px;align-items:start}
+
+  /* ---- left: the record card ---- */
+  .record{
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:26px 24px;position:sticky;top:118px;box-shadow:var(--shadow);
+  }
+  .portrait{
+    width:112px;height:112px;border-radius:14px;position:relative;overflow:hidden;
+    background:linear-gradient(150deg,var(--blue),var(--navy));margin-bottom:16px;
+    border:1px solid var(--line);
+  }
+  .portrait::after{
+    content:"OH";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    color:#fff;font-size:40px;font-weight:700;letter-spacing:.02em;
+  }
+  .portrait img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
+  .record h1{font-size:26px;line-height:1.15;letter-spacing:-.01em;margin:0 0 4px;color:var(--navy)}
+  .byline{font-variant:small-caps;letter-spacing:.1em;color:var(--blue);font-size:13px;margin:0 0 14px}
+  .intro{font-size:15.5px;color:#26404f;margin:0 0 18px}
+
+  .fields{border-top:1px solid var(--line);margin:0 0 18px;padding-top:12px}
+  .fields dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0}
+  .fields dt{font-variant:small-caps;letter-spacing:.08em;font-size:12.5px;color:var(--muted);padding-top:2px}
+  .fields dd{margin:0;font-size:14.5px;color:var(--ink)}
+
+  .reach{display:flex;flex-wrap:wrap;gap:6px 16px;margin:0 0 20px;font-size:14px}
+  .reach a{color:var(--blue-2)}
+  .reach a .up{font-size:11px;vertical-align:2px}
+
+  .search-wrap{position:relative;margin-bottom:14px}
+  .search-wrap input{
+    width:100%;font-family:var(--serif);font-size:15px;color:var(--ink);
+    padding:11px 12px 11px 36px;border:1px solid var(--line-strong);border-radius:9px;background:#fff;
+  }
+  .search-wrap input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
+  .search-wrap svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:16px;height:16px;fill:var(--muted)}
+
+  .index .ihead{font-size:11px;font-variant:small-caps;letter-spacing:.12em;color:var(--muted);margin:0 0 6px}
+  .index a{
+    display:flex;justify-content:space-between;gap:10px;align-items:baseline;
+    padding:6px 0;border-bottom:1px solid var(--line);color:var(--navy);font-size:14px;
+  }
+  .index a:hover{color:var(--blue);text-decoration:none}
+  .index a .desk{font-size:11px;color:var(--muted);white-space:nowrap;font-variant:small-caps;letter-spacing:.06em}
+  .index .none{font-size:13px;color:var(--muted);padding:8px 0}
+
+  /* ---- right: clips ---- */
+  .status{
+    background:var(--navy);color:#fff;border-radius:14px;padding:20px 24px;margin-bottom:26px;
+    box-shadow:var(--shadow);
+  }
+  .status .eyebrow{color:#8FB6DB}
+  .status p{margin:6px 0 0;font-size:18px}
+
+  .desk{margin-bottom:30px;scroll-margin-top:120px}
+  .desk-head{display:flex;align-items:baseline;gap:12px;border-bottom:2px solid var(--navy);padding-bottom:8px;margin-bottom:16px}
+  .desk-head h2{font-size:21px;margin:0;color:var(--navy);letter-spacing:-.01em}
+  .desk-head .count{font-size:13px;color:var(--muted);font-variant:small-caps;letter-spacing:.08em}
+
+  .clip{
+    display:grid;grid-template-columns:150px 1fr;gap:18px;
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:16px;margin-bottom:14px;box-shadow:var(--shadow);scroll-margin-top:120px;
+    transition:border-color .15s ease, transform .15s ease;
+  }
+  .clip:hover{border-color:var(--blue)}
+  .clip.flash{animation:flash 1.4s ease}
+  @keyframes flash{0%{box-shadow:0 0 0 3px var(--blue-2)}100%{box-shadow:var(--shadow)}}
+  .thumb{
+    position:relative;border-radius:9px;overflow:hidden;min-height:112px;
+    background:linear-gradient(150deg,var(--blue),var(--navy));
+  }
+  .thumb::before{
+    content:attr(data-initials);position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    color:rgba(255,255,255,.9);font-size:26px;font-weight:700;letter-spacing:.03em;
+  }
+  .thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
+  .tag{
+    display:inline-block;font-variant:small-caps;letter-spacing:.08em;font-size:12px;font-weight:700;
+    color:var(--blue);background:var(--blue-soft);border-radius:999px;padding:2px 11px;margin-bottom:7px;
+  }
+  .clip h3{font-size:19px;line-height:1.25;margin:0 0 6px;letter-spacing:-.01em}
+  .clip h3 a{color:var(--navy)}
+  .clip .meta{font-size:13px;color:var(--muted);margin:0 0 8px;font-variant:small-caps;letter-spacing:.05em}
+  .clip .sum{font-size:15px;color:#28404f;margin:0 0 10px}
+  .clip .read{font-size:14px;font-weight:700;color:var(--blue-2)}
+  .clip .read .up{font-size:11px;vertical-align:2px}
+
+  .misc-item{
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;
+    margin-bottom:12px;box-shadow:var(--shadow);
+  }
+  .misc-item .tag{background:#eef2f6;color:var(--navy)}
+  .misc-item h3{font-size:17px;margin:0 0 4px}
+  .misc-item h3 a{color:var(--navy)}
+  .misc-item .sum{font-size:14.5px;color:#33485a;margin:0}
+  .misc-item .meta{font-size:12.5px;color:var(--muted);font-variant:small-caps;letter-spacing:.05em;margin:2px 0 0}
+
+  .empty{background:var(--panel);border:1px dashed var(--line-strong);border-radius:12px;padding:40px 28px;text-align:center;color:var(--muted)}
+  .empty h3{margin:0 0 8px;color:var(--navy);font-size:18px}
+  .empty .btn{font-family:var(--serif);font-size:15px;background:var(--blue);color:#fff;border:0;border-radius:9px;padding:10px 18px;cursor:pointer;margin:4px}
+  .empty .btn.ghost{background:transparent;color:var(--blue);border:1px solid var(--line-strong)}
+  #fileInput{display:none}
+
+  :focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:6px}
+
+  @media (max-width:900px){
+    .panes{grid-template-columns:1fr}
+    .record{position:static}
+  }
+  @media (max-width:560px){
+    body{font-size:16px}
+    .clip{grid-template-columns:1fr}
+    .thumb{min-height:150px}
+  }
+
+  /* ---------- print / export-view ---------- */
+  @media print{
+    .topbar,.toolbar,.search-wrap,.index,.contacts,.reach{display:none !important}
+    body{background:#fff}
+    .panes{display:block;max-width:none;padding:0}
+    .record{box-shadow:none;border:0;border-bottom:1px solid #000;border-radius:0;margin-bottom:16px}
+    .status{background:#fff;color:#000;border:1px solid #000;box-shadow:none}
+    .status .eyebrow{color:#000}
+    .clip,.misc-item{box-shadow:none;break-inside:avoid;border-color:#999}
+    a{color:#000;text-decoration:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="inner">
+    <div class="brand">Oscar Manuel Heller <small>writer &amp; editor</small></div>
+    <nav class="contacts" aria-label="Contact">
+      <!-- Instagram -->
+      <a href="https://instagram.com/YOUR_HANDLE" target="_blank" rel="noopener" title="Instagram" aria-label="Instagram">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.9.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.86s0 3.6-.07 4.86c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.9.07s-3.6 0-4.86-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.86c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.4 2.2 8.8 2.2 12 2.2Zm0 1.8c-3.15 0-3.5 0-4.74.07-.9.04-1.38.19-1.7.32-.43.16-.74.36-1.06.68-.32.32-.52.63-.68 1.06-.13.32-.28.8-.32 1.7C3.13 8.5 3.13 8.85 3.13 12s0 3.5.07 4.74c.04.9.19 1.38.32 1.7.16.43.36.74.68 1.06.32.32.63.52 1.06.68.32.13.8.28 1.7.32 1.24.07 1.59.07 4.74.07s3.5 0 4.74-.07c.9-.04 1.38-.19 1.7-.32.43-.16.74-.36 1.06-.68.32-.32.52-.63.68-1.06.13-.32.28-.8.32-1.7.07-1.24.07-1.59.07-4.74s0-3.5-.07-4.74c-.04-.9-.19-1.38-.32-1.7a2.85 2.85 0 0 0-.68-1.06 2.85 2.85 0 0 0-1.06-.68c-.32-.13-.8-.28-1.7-.32C15.5 4 15.15 4 12 4Zm0 3.06A4.94 4.94 0 1 1 12 17a4.94 4.94 0 0 1 0-9.88Zm0 1.8a3.14 3.14 0 1 0 0 6.28 3.14 3.14 0 0 0 0-6.28Zm5.14-.96a1.15 1.15 0 1 1-2.3 0 1.15 1.15 0 0 1 2.3 0Z"/></svg>
+      </a>
+      <!-- Muck Rack -->
+      <a href="https://muckrack.com/oscar-heller" target="_blank" rel="noopener" title="Muck Rack" aria-label="Muck Rack">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><text x="12" y="16.5" text-anchor="middle" font-size="12">MR</text></svg>
+      </a>
+      <!-- Email -->
+      <a href="mailto:oscar.heller@yale.edu" title="Email" aria-label="Email">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm.4 2 8.6 6.1L20.6 7H3.4ZM20 8.6l-8 5.7-8-5.7V17h16V8.6Z"/></svg>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="inner">
+    <div class="crumb" id="crumb">Clips › <b>All desks</b></div>
+    <div class="controls">
+      <div class="menu">
+        <button class="ctl" id="filterBtn" aria-haspopup="true">Filter <span class="car">▾</span></button>
+        <div class="pop" id="filterPop" role="menu"></div>
+      </div>
+      <div class="menu">
+        <button class="ctl" id="sortBtn" aria-haspopup="true">Sort <span class="car">▾</span></button>
+        <div class="pop" id="sortPop" role="menu">
+          <div class="label">Sort by</div>
+          <button role="menuitemradio" data-sort="new" aria-checked="true">Newest first</button>
+          <button role="menuitemradio" data-sort="old" aria-checked="false">Oldest first</button>
+          <button role="menuitemradio" data-sort="az" aria-checked="false">Title A → Z</button>
+          <button role="menuitemradio" data-sort="za" aria-checked="false">Title Z → A</button>
+          <button role="menuitemradio" data-sort="filed" aria-checked="false">Filed order</button>
+        </div>
+      </div>
+      <div class="menu">
+        <button class="ctl" id="exportBtn" aria-haspopup="true">Export <span class="car">▾</span></button>
+        <div class="pop" id="exportPop" role="menu">
+          <div class="label">Export</div>
+          <button data-export="print">Print clips<span class="hint">Opens a print-ready layout</span></button>
+          <button data-export="csv">Download current view<span class="hint">Saves the visible clips as CSV</span></button>
+        </div>
+      </div>
+      <button class="ctl icon" id="searchIcon" title="Search" aria-label="Search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 2a8 8 0 1 0 4.9 14.3l5.4 5.4 1.4-1.4-5.4-5.4A8 8 0 0 0 10 2Zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12Z"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<main class="panes">
+  <!-- LEFT: record card + search + index -->
+  <aside class="record">
+    <div class="portrait"><img src="oscar.jpg" alt="Oscar Manuel Heller" onerror="this.style.display='none'"></div>
+    <h1 id="rName">Oscar Manuel Heller</h1>
+    <p class="byline">Writer &amp; Editor · Yale</p>
+    <p class="intro" id="rIntro"></p>
+    <div class="fields"><dl id="rFields"></dl></div>
+    <div class="reach">
+      <a href="mailto:oscar.heller@yale.edu">email <span class="up">↗</span></a>
+      <a href="https://muckrack.com/oscar-heller" target="_blank" rel="noopener">muck rack <span class="up">↗</span></a>
+      <a href="https://instagram.com/YOUR_HANDLE" target="_blank" rel="noopener">instagram <span class="up">↗</span></a>
+    </div>
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 2a8 8 0 1 0 4.9 14.3l5.4 5.4 1.4-1.4-5.4-5.4A8 8 0 0 0 10 2Zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12Z"/></svg>
+      <input id="search" type="search" placeholder="Search for a topic" aria-label="Search for a topic">
+    </div>
+    <div class="index">
+      <p class="ihead">In this view</p>
+      <div id="indexList"></div>
+    </div>
+  </aside>
+
+  <!-- RIGHT: status + desks + misc -->
+  <section class="right" id="right">
+    <div class="status" id="status" hidden>
+      <p class="eyebrow">Currently</p>
+      <p id="statusText"></p>
+    </div>
+    <div id="clips"></div>
+  </section>
+</main>
+
+<input type="file" id="fileInput" accept=".csv,text/csv">
+
+<script>
+"use strict";
+
+/* ---------- CSV parser (RFC-4180-ish, no dependencies) ---------- */
+function parseCSV(text){
+  const rows=[]; let row=[],f="",i=0,q=false;
+  text=text.replace(/^\uFEFF/,"").replace(/\r\n?/g,"\n");
+  while(i<text.length){
+    const c=text[i];
+    if(q){
+      if(c==='"'){ if(text[i+1]==='"'){f+='"';i+=2;continue;} q=false;i++;continue; }
+      f+=c;i++;continue;
+    }
+    if(c==='"'){q=true;i++;continue;}
+    if(c===','){row.push(f);f="";i++;continue;}
+    if(c==='\n'){row.push(f);rows.push(row);row=[];f="";i++;continue;}
+    f+=c;i++;
+  }
+  if(f.length||row.length){row.push(f);rows.push(row);}
+  return rows.filter(r=>r.length&&r.some(v=>v.trim()!==""));
+}
+function toRecords(rows){
+  if(!rows.length) return [];
+  const head=rows[0].map(h=>h.trim().toLowerCase());
+  return rows.slice(1).map(cells=>{
+    const r={}; head.forEach((k,i)=>r[k]=(cells[i]||"").trim()); return r;
+  });
+}
+
+/* ---------- helpers ---------- */
+const DESKS=["Investigative","Culture and Sports","Politics"];
+const $=s=>document.querySelector(s);
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
+function initials(src){
+  if(!src) return "•";
+  return src.replace(/^The\s+/i,"").split(/\s+/).map(w=>w[0]).join("").slice(0,3).toUpperCase();
+}
+function fmtDate(iso){
+  if(!iso) return "";
+  const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(iso); if(!m) return iso;
+  const months=["January","February","March","April","May","June","July","August","September","October","November","December"];
+  return months[+m[2]-1]+" "+(+m[3])+", "+m[1];
+}
+
+/* ---------- state ---------- */
+let ALL=[], SORT="new", FILTER="all", QUERY="";
+
+function bio(){return ALL.filter(r=>r.section==="BIO");}
+function articles(){return ALL.filter(r=>r.section==="CURRENT"&&r.category!=="Status");}
+function statusRec(){return ALL.find(r=>r.section==="CURRENT"&&r.category==="Status");}
+function misc(){return ALL.filter(r=>r.section==="MISC");}
+
+function matchQuery(r){
+  if(!QUERY) return true;
+  const hay=[r.title,r.source,r.summary,r.category,r.tags].join(" ").toLowerCase();
+  return hay.includes(QUERY);
+}
+function sortList(list){
+  const a=list.slice();
+  if(SORT==="az") a.sort((x,y)=>x.title.localeCompare(y.title));
+  else if(SORT==="za") a.sort((x,y)=>y.title.localeCompare(x.title));
+  else if(SORT==="new") a.sort((x,y)=>(y.date||"").localeCompare(x.date||""));
+  else if(SORT==="old") a.sort((x,y)=>(x.date||"").localeCompare(y.date||""));
+  return a; /* "filed" keeps CSV order */
+}
+
+/* which records are visible under current filter + query */
+function visibleArticles(){
+  return articles().filter(r=>matchQuery(r)).filter(r=>FILTER==="all"||FILTER===r.category);
+}
+function visibleMisc(){
+  if(FILTER!=="all"&&FILTER!=="Misc") return [];
+  return misc().filter(r=>matchQuery(r));
+}
+
+/* ---------- render: left ---------- */
+function renderBio(){
+  const intro=bio().find(r=>r.category==="Intro");
+  $("#rIntro").textContent=intro?intro.summary:"";
+  const dl=$("#rFields"); dl.innerHTML="";
+  bio().filter(r=>r.category==="Field").forEach(r=>{
+    dl.insertAdjacentHTML("beforeend",`<dt>${esc(r.title)}</dt><dd>${esc(r.summary)}</dd>`);
+  });
+}
+function renderIndex(){
+  const list=$("#indexList"); const items=sortList(visibleArticles()).concat(visibleMisc());
+  if(!items.length){ list.innerHTML='<p class="none">No matches. Clear the search to see everything.</p>'; return; }
+  list.innerHTML=items.map(r=>{
+    const desk=r.section==="MISC"?"Misc":r.category;
+    return `<a href="#" data-jump="${esc(r._id)}"><span>${esc(r.title)}</span><span class="desk">${esc(desk)}</span></a>`;
+  }).join("");
+  list.querySelectorAll("[data-jump]").forEach(a=>{
+    a.onclick=e=>{e.preventDefault();const el=document.getElementById(a.dataset.jump);
+      if(el){el.scrollIntoView({behavior:"smooth",block:"center"});el.classList.remove("flash");void el.offsetWidth;el.classList.add("flash");}};
+  });
+}
+
+/* ---------- render: right ---------- */
+function articleCard(r){
+  const img=r.image&&r.image!=="#"
+    ? `<img src="${esc(r.image)}" alt="" loading="lazy" onerror="this.style.display='none'">` : "";
+  const meta=[r.source,fmtDate(r.date)].filter(Boolean).join(" · ");
+  return `<article class="clip" id="${esc(r._id)}">
+    <div class="thumb" data-initials="${esc(initials(r.source))}">${img}</div>
+    <div class="clip-body">
+      <span class="tag">${esc(r.category)}</span>
+      <h3><a href="${esc(r.link)}" target="_blank" rel="noopener">${esc(r.title)}</a></h3>
+      <p class="meta">${esc(meta)}</p>
+      <p class="sum">${esc(r.summary)}</p>
+      <a class="read" href="${esc(r.link)}" target="_blank" rel="noopener">Read the piece <span class="up">↗</span></a>
+    </div>
+  </article>`;
+}
+function miscCard(r){
+  const hasLink=r.link&&r.link!=="#";
+  const title=hasLink?`<a href="${esc(r.link)}" target="_blank" rel="noopener">${esc(r.title)}</a>`:esc(r.title);
+  const meta=[r.source].filter(Boolean).join("");
+  return `<div class="misc-item" id="${esc(r._id)}">
+    <span class="tag">${esc(r.category)}</span>
+    <h3>${title}</h3>
+    <p class="sum">${esc(r.summary)}</p>
+    ${meta?`<p class="meta">${esc(meta)}</p>`:""}
+  </div>`;
+}
+function renderRight(){
+  // status
+  const st=statusRec();
+  if(st){$("#status").hidden=false;$("#statusText").textContent=st.summary;}else{$("#status").hidden=true;}
+
+  const wrap=$("#clips"); wrap.innerHTML="";
+  const vis=visibleArticles(), vmisc=visibleMisc();
+
+  if(!vis.length && !vmisc.length){
+    wrap.innerHTML=`<div class="empty"><h3>No clips match “${esc(QUERY)}”.</h3>
+      <p>Try another topic, or reset the filter.</p></div>`;
+    return;
+  }
+
+  DESKS.forEach(desk=>{
+    if(FILTER!=="all"&&FILTER!==desk) return;
+    const items=sortList(vis.filter(r=>r.category===desk));
+    if(!items.length) return;
+    wrap.insertAdjacentHTML("beforeend",
+      `<section class="desk" id="desk-${desk.replace(/\s+/g,'-').toLowerCase()}">
+        <div class="desk-head"><h2>${esc(desk)}</h2><span class="count">${items.length} clip${items.length>1?"s":""}</span></div>
+        ${items.map(articleCard).join("")}
+      </section>`);
+  });
+
+  if(vmisc.length){
+    wrap.insertAdjacentHTML("beforeend",
+      `<section class="desk" id="desk-misc">
+        <div class="desk-head"><h2>Miscellany</h2><span class="count">${vmisc.length} item${vmisc.length>1?"s":""}</span></div>
+        ${vmisc.map(miscCard).join("")}
+      </section>`);
+  }
+}
+function renderCrumb(){
+  const n=visibleArticles().length+visibleMisc().length;
+  const where=FILTER==="all"?"All desks":FILTER;
+  $("#crumb").innerHTML=`Clips › <b>${esc(where)}</b> · ${n} clip${n===1?"":"s"}`;
+}
+function renderAll(){renderBio();renderRight();renderIndex();renderCrumb();}
+
+/* ---------- controls ---------- */
+function buildFilterMenu(){
+  const pop=$("#filterPop");
+  const opts=[["all","All desks"],...DESKS.map(d=>[d,d]),["Misc","Miscellany"]];
+  pop.innerHTML='<div class="label">Filter by desk</div>'+opts.map(([v,l])=>
+    `<button role="menuitemradio" data-filter="${esc(v)}" aria-checked="${v===FILTER}">${esc(l)}</button>`).join("");
+  pop.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{
+    FILTER=b.dataset.filter;
+    pop.querySelectorAll("[data-filter]").forEach(x=>x.setAttribute("aria-checked",x.dataset.filter===FILTER));
+    closeMenus();renderAll();
+  });
+}
+function wireSort(){
+  $("#sortPop").querySelectorAll("[data-sort]").forEach(b=>b.onclick=()=>{
+    SORT=b.dataset.sort;
+    $("#sortPop").querySelectorAll("[data-sort]").forEach(x=>x.setAttribute("aria-checked",x.dataset.sort===SORT));
+    closeMenus();renderAll();
+  });
+}
+function wireExport(){
+  $("#exportPop").querySelector('[data-export="print"]').onclick=()=>{closeMenus();window.print();};
+  $("#exportPop").querySelector('[data-export="csv"]').onclick=()=>{closeMenus();downloadCSV();};
+}
+function downloadCSV(){
+  const cols=["section","category","title","source","date","summary","image","link","tags"];
+  const rows=[cols.join(",")];
+  const q=v=>{v=v==null?"":String(v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
+  visibleArticles().concat(visibleMisc()).forEach(r=>rows.push(cols.map(c=>q(r[c])).join(",")));
+  const blob=new Blob([rows.join("\n")],{type:"text/csv"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="oscar-heller-clips.csv";
+  document.body.appendChild(a);a.click();a.remove();
+}
+function closeMenus(){document.querySelectorAll(".pop.open").forEach(p=>p.classList.remove("open"));}
+function toggleMenu(id){const p=$(id);const open=p.classList.contains("open");closeMenus();if(!open)p.classList.add("open");}
+$("#filterBtn").onclick=e=>{e.stopPropagation();toggleMenu("#filterPop");};
+$("#sortBtn").onclick=e=>{e.stopPropagation();toggleMenu("#sortPop");};
+$("#exportBtn").onclick=e=>{e.stopPropagation();toggleMenu("#exportPop");};
+document.addEventListener("click",closeMenus);
+document.querySelectorAll(".pop").forEach(p=>p.addEventListener("click",e=>e.stopPropagation()));
+$("#searchIcon").onclick=()=>{const s=$("#search");s.scrollIntoView({behavior:"smooth",block:"center"});s.focus();};
+$("#search").addEventListener("input",e=>{QUERY=e.target.value.trim().toLowerCase();renderAll();});
+
+/* ---------- load data ---------- */
+function seat(records){
+  ALL=records.map((r,i)=>({...r,section:(r.section||"").toUpperCase(),_id:"rec-"+i}));
+  buildFilterMenu();wireSort();wireExport();renderAll();
+}
+function renderNeedsFile(){
+  $("#clips").innerHTML=`<div class="empty">
+    <h3>Point the page at content.csv</h3>
+    <p>Open this page from a folder that also contains <strong>content.csv</strong> (serve the folder),
+       or load the file directly with the button below.</p>
+    <button class="btn" id="pickBtn">Load content.csv</button>
+    <button class="btn ghost" id="sampleBtn">Preview with sample data</button>
+  </div>`;
+  $("#pickBtn").onclick=()=>$("#fileInput").click();
+  $("#sampleBtn").onclick=()=>seat(toRecords(parseCSV(SAMPLE)));
+}
+$("#fileInput").addEventListener("change",ev=>{
+  const f=ev.target.files[0]; if(!f) return;
+  const rd=new FileReader();
+  rd.onload=()=>{try{seat(toRecords(parseCSV(rd.result)));}catch(e){renderNeedsFile();}};
+  rd.readAsText(f);
+});
+async function init(){
+  try{
+    const res=await fetch("content.csv",{cache:"no-store"});
+    if(!res.ok) throw 0;
+    seat(toRecords(parseCSV(await res.text())));
+  }catch(e){ renderNeedsFile(); }
+}
+
+/* sample mirrors content.csv — used only by "Preview with sample data" */
+const SAMPLE=
+`section,category,title,source,date,summary,image,link,tags
+BIO,Intro,"Oscar Manuel Heller",,,"Writer and editor finishing a B.A. in English at Yale. I report, edit, and tell stories across investigations, culture, sports, and politics.",,,
+BIO,Field,"College",,,"Yale University — Ezra Stiles College",,,
+BIO,Field,"Study",,,"B.A. in English, with certificate study in Medieval Studies",,,
+BIO,Field,"Class",,,"Class of 2026",,,
+BIO,Field,"Now",,,"Editor-in-Chief, The Yale Herald",,,
+BIO,Field,"Hometown",,,"Upper St. Clair, Pennsylvania",,,
+CURRENT,Status,"Currently",,,"Graduating in 2026 and looking for editorial, reporting, and writing roles. Available for freelance.",,,
+CURRENT,Investigative,"Lighting Up in the Land of Steady Habits","The New Journal",2026-05-08,"An investigation into New Haven's unlicensed cannabis market: a sample sent to a state lab came back with mold hundreds of times over the legal limit.","https://thenewjournalatyale.com/wp-content/uploads/2026/05/DSCF1900-1800x1200.jpg","https://thenewjournalatyale.com/2026/05/lighting-up-in-the-land-of-steady-habits/","cannabis, investigation, public health"
+CURRENT,Culture and Sports,"In a conference not known for athletics, Yale men's basketball is making a name for itself","Yale Daily News",2024-11-05,"A long-form look at how Yale men's basketball built a winner, and what NIL money and the transfer portal mean for the Ivy League.","","https://yaledailynews.com/blog/2024/11/05/in-a-conference-not-known-for-athletics-yale-mens-basketball-is-making-a-name-for-itself/","basketball, Ivy League, sports"
+CURRENT,Culture and Sports,"Books, Addiction, and the Humanities","The Yale Herald",2024-02-19,"A Teach(Ed) column on reading, addiction, and why the humanities still ask how to live.","","https://yale-herald.com/2024/02/19/books-addiction-and-the-humanities/","essay, humanities"
+CURRENT,Politics,"Ghosts of Colonialism: Unrest and Political Identity in Peru","The Politic",2023-05-03,"A reported feature on political unrest and identity in Peru and the long shadow of colonialism.","https://thepolitic.org/wp-content/uploads/2023/05/Cusco-paro-2.jpg","https://thepolitic.org/ghosts-of-colonialism-unrest-and-political-identity-in-peru/","Peru, politics"
+MISC,Column,"Teach(Ed) — my Yale Herald column","The Yale Herald",,"A biweekly column on teaching and being taught.","","https://yale-herald.com/tag/oscar-heller/","column"
+MISC,Reading,"Add a book you love",,,"Swap in a title and one line on why it stays with you.","","#","placeholder"
+MISC,Watch,"Add a clip or video",,,"Link a short video, talk, or reel you want people to see.","","#","placeholder"`;
+
+init();
+</script>
+</body>
 </html>
