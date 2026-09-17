@@ -3,6 +3,15 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
+      const cacheBust = 'cache-bust';
+      const pageUrl = new URL(window.location.href);
+
+      if (!pageUrl.searchParams.has(cacheBust)) {
+        pageUrl.searchParams.set(cacheBust, Date.now().toString());
+        window.location.replace(pageUrl.href);
+      }
+    </script>
     <title>Hello World</title>
   </head>
   <body>
