@@ -84,10 +84,47 @@ img{max-width:100%;display:block}
   border-bottom:1px solid var(--line);
 }
 .masthead{
+  position:relative;
   height:var(--header-brand-h);
   display:flex;align-items:center;justify-content:center;
   text-align:center;
 }
+
+/* ---------- hamburger: Filter / Sort / Export / Search ---------- */
+.hamburger-btn{
+  position:absolute;right:24px;top:50%;transform:translateY(-50%);
+  width:38px;height:38px;border-radius:9px;
+  background:var(--panel);border:1px solid var(--line-strong);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.hamburger-btn:hover{border-color:var(--blue)}
+.hamburger-btn svg{width:19px;height:19px;stroke:var(--navy)}
+.hamburger-panel{
+  position:absolute;right:24px;top:calc(100% + 8px);z-index:60;
+  background:var(--panel);border:1px solid var(--line-strong);border-radius:10px;
+  box-shadow:var(--shadow);min-width:230px;padding:6px;display:none;
+}
+.hamburger-panel.open{display:block}
+.ham-group{border-bottom:1px solid var(--line)}
+.ham-group:last-of-type{border-bottom:0}
+.ham-item{
+  width:100%;text-align:left;font-family:var(--serif);font-size:14.5px;color:var(--ink);
+  background:none;border:0;border-radius:7px;padding:9px 10px;cursor:pointer;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+}
+.ham-item:hover{background:var(--blue-soft)}
+.ham-item .car{font-size:11px;color:var(--muted);transition:transform .15s ease}
+.ham-item[aria-expanded="true"] .car{transform:rotate(180deg)}
+.ham-sub{display:none;padding:0 0 6px 10px}
+.ham-sub.open{display:block}
+.ham-sub button{
+  width:100%;text-align:left;font-family:var(--serif);font-size:14px;color:var(--ink);
+  background:none;border:0;border-radius:7px;padding:7px 10px;cursor:pointer;display:block;
+}
+.ham-sub button:hover{background:var(--blue-soft)}
+.ham-sub button[aria-checked="true"],.ham-sub button.active{color:var(--blue);font-weight:700}
+.ham-item--flat{gap:10px;justify-content:flex-start}
+.ham-item--flat svg{width:15px;height:15px;fill:var(--muted);flex:0 0 auto}
 .masthead .brand{
   font-weight:700;font-size:24px;letter-spacing:-.01em;color:var(--navy);
   line-height:1.15;
@@ -158,6 +195,28 @@ img{max-width:100%;display:block}
    gutters between cards, held constant at every breakpoint.
    ============================================================ */
 main{padding-bottom:var(--rhythm-6)}
+
+/* ---------- collapsible "news desks" ---------- */
+.desks-toggle{
+  width:100%;display:flex;align-items:center;gap:10px;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px var(--rhythm-3);margin-top:var(--rhythm-4);cursor:pointer;
+  box-shadow:var(--shadow);
+}
+.desks-toggle:hover{border-color:var(--blue)}
+.desks-toggle .chev{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:20px;height:20px;color:var(--blue);flex:0 0 auto;
+  transition:transform .18s ease;
+}
+.desks-toggle[aria-expanded="true"] .chev{transform:rotate(90deg)}
+.desks-toggle .label{
+  font-variant:small-caps;letter-spacing:.12em;font-weight:700;font-size:15px;color:var(--navy);
+}
+.desks-toggle .hint{margin-left:auto;font-size:12px;color:var(--muted);font-variant:small-caps;letter-spacing:.08em}
+.desks-collapse{display:none}
+.desks-collapse.open{display:block}
+
 .desk{margin-top:var(--rhythm-6);scroll-margin-top:150px}
 .desk-head{
   display:flex;align-items:baseline;justify-content:space-between;gap:12px;
@@ -227,6 +286,15 @@ main{padding-bottom:var(--rhythm-6)}
   .nav-row nav{gap:18px}
   .nav-row a{font-size:12.5px}
   .misc-grid{grid-template-columns:1fr}
+  .hamburger-btn{right:16px}
+  .hamburger-panel{right:16px}
+}
+@media print{
+  .site-header,.controls,.desks-toggle{display:none !important}
+  body{background:#fff}
+  .desks-collapse{display:block !important}
+  .card,.misc-card,.status-card{box-shadow:none;break-inside:avoid;border-color:#999}
+  a{color:#000;text-decoration:none}
 }
 </style>
 </head>
@@ -235,6 +303,38 @@ main{padding-bottom:var(--rhythm-6)}
 <header class="site-header">
   <div class="masthead">
     <div class="brand">Oscar Manuel Heller<small>writer &amp; editor</small></div>
+    <button class="hamburger-btn" id="hamburgerBtn" aria-haspopup="true" aria-expanded="false" aria-label="Open menu">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <div class="hamburger-panel" id="hamburgerPanel" role="menu">
+      <div class="ham-group">
+        <button class="ham-item" id="hamFilterBtn" data-target="filterSub" aria-expanded="false" aria-haspopup="true">Filter <span class="car">▾</span></button>
+        <div class="ham-sub" id="filterSub"></div>
+      </div>
+      <div class="ham-group">
+        <button class="ham-item" id="hamSortBtn" data-target="sortSub" aria-expanded="false" aria-haspopup="true">Sort <span class="car">▾</span></button>
+        <div class="ham-sub" id="sortSub">
+          <button role="menuitemradio" data-sort="new" aria-checked="true">Newest first</button>
+          <button role="menuitemradio" data-sort="old" aria-checked="false">Oldest first</button>
+          <button role="menuitemradio" data-sort="az" aria-checked="false">Title A → Z</button>
+          <button role="menuitemradio" data-sort="za" aria-checked="false">Title Z → A</button>
+          <button role="menuitemradio" data-sort="filed" aria-checked="false">Filed order</button>
+        </div>
+      </div>
+      <div class="ham-group">
+        <button class="ham-item" id="hamExportBtn" data-target="exportSub" aria-expanded="false" aria-haspopup="true">Export <span class="car">▾</span></button>
+        <div class="ham-sub" id="exportSub">
+          <button data-export="print">Print clips</button>
+          <button data-export="csv">Download current view</button>
+        </div>
+      </div>
+      <div class="ham-group">
+        <button class="ham-item ham-item--flat" id="hamSearchBtn">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 2a8 8 0 1 0 4.9 14.3l5.4 5.4 1.4-1.4-5.4-5.4A8 8 0 0 0 10 2Zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12Z"/></svg>
+          Search
+        </button>
+      </div>
+    </div>
   </div>
   <div class="nav-row">
     <nav aria-label="Main">
@@ -325,7 +425,15 @@ function fmtDate(iso){
 }
 
 /* ---------- state ---------- */
-let ALL=[], FILTER="all", QUERY="";
+let ALL=[], FILTER="all", QUERY="", SORT="new", DESKS_OPEN=false;
+function sortList(list){
+  const a=list.slice();
+  if(SORT==="az") a.sort((x,y)=>x.title.localeCompare(y.title));
+  else if(SORT==="za") a.sort((x,y)=>y.title.localeCompare(x.title));
+  else if(SORT==="new") a.sort((x,y)=>(y.date||"").localeCompare(x.date||""));
+  else if(SORT==="old") a.sort((x,y)=>(x.date||"").localeCompare(y.date||""));
+  return a; /* "filed" keeps CSV order */
+}
 function bio(){return ALL.filter(r=>r.section==="BIO");}
 function articles(){return ALL.filter(r=>r.section==="CURRENT"&&r.category!=="Status");}
 function statusRec(){return ALL.find(r=>r.section==="CURRENT"&&r.category==="Status");}
@@ -392,22 +500,49 @@ function renderRight(){
     return;
   }
 
-  let firstFeaturedUsed=false;
-  DESKS.forEach(desk=>{
-    if(FILTER!=="all"&&FILTER!==desk) return;
-    const items=vis.filter(r=>r.category===desk).sort((a,b)=>(b.date||"").localeCompare(a.date||""));
-    if(!items.length) return;
-    const cards=items.map(r=>{
-      const isFeature=!firstFeaturedUsed && r.featured && r.featured.toLowerCase()==="true";
-      if(isFeature) firstFeaturedUsed=true;
-      return articleCard(r,isFeature);
-    }).join("");
+  const eligibleDesks=DESKS.filter(desk=>FILTER==="all"||FILTER===desk);
+  const anyDeskItems=eligibleDesks.some(desk=>vis.some(r=>r.category===desk));
+
+  if(anyDeskItems){
+    /* auto-reveal the desks once the person filters to one, or a search
+       query actually matches something — the collapse is a resting state,
+       not an obstacle to results the person went looking for */
+    if(FILTER!=="all" || QUERY){ DESKS_OPEN=true; }
+
     wrap.insertAdjacentHTML("beforeend",
-      `<section class="desk" id="desk-${desk.replace(/\s+/g,'-').toLowerCase()}">
-        <div class="desk-head"><h2>${esc(desk)}</h2><span class="count">${items.length} clip${items.length>1?"s":""}</span></div>
-        <div class="card-grid">${cards}</div>
-      </section>`);
-  });
+      `<button type="button" class="desks-toggle" id="desksToggle" aria-expanded="${DESKS_OPEN}" aria-controls="desksContainer">
+        <span class="chev" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+        </span>
+        <span class="label">Visit news desks</span>
+        <span class="hint">${DESKS_OPEN?"Hide":"Show"} Investigative, Culture &amp; Sports, Politics</span>
+      </button>
+      <div class="desks-collapse${DESKS_OPEN?" open":""}" id="desksContainer"></div>`);
+
+    const desksContainer=$("#desksContainer");
+    let firstFeaturedUsed=false;
+    eligibleDesks.forEach(desk=>{
+      const items=sortList(vis.filter(r=>r.category===desk));
+      if(!items.length) return;
+      const cards=items.map(r=>{
+        const isFeature=!firstFeaturedUsed && r.featured && r.featured.toLowerCase()==="true";
+        if(isFeature) firstFeaturedUsed=true;
+        return articleCard(r,isFeature);
+      }).join("");
+      desksContainer.insertAdjacentHTML("beforeend",
+        `<section class="desk" id="desk-${desk.replace(/\s+/g,'-').toLowerCase()}">
+          <div class="desk-head"><h2>${esc(desk)}</h2><span class="count">${items.length} clip${items.length>1?"s":""}</span></div>
+          <div class="card-grid">${cards}</div>
+        </section>`);
+    });
+
+    $("#desksToggle").addEventListener("click",()=>{
+      DESKS_OPEN=!DESKS_OPEN;
+      $("#desksToggle").setAttribute("aria-expanded",DESKS_OPEN);
+      $("#desksToggle").querySelector(".hint").textContent=(DESKS_OPEN?"Hide":"Show")+" Investigative, Culture & Sports, Politics";
+      $("#desksContainer").classList.toggle("open",DESKS_OPEN);
+    });
+  }
 
   if(vmisc.length){
     wrap.insertAdjacentHTML("beforeend",
@@ -427,9 +562,75 @@ function renderPills(){
   });
 }
 
-function renderAll(){renderBio();renderRight();renderPills();}
+function renderAll(){renderBio();renderRight();renderPills();renderHamFilter();}
 
 $("#search").addEventListener("input",e=>{QUERY=e.target.value.trim().toLowerCase();renderAll();});
+
+/* ---------- hamburger: Filter / Sort / Export / Search ---------- */
+function renderHamFilter(){
+  const opts=[["all","All desks"],...DESKS.map(d=>[d,d]),["Misc","Miscellany"]];
+  $("#filterSub").innerHTML=opts.map(([v,l])=>
+    `<button role="menuitemradio" data-filter="${esc(v)}" aria-checked="${v===FILTER}">${esc(l)}</button>`).join("");
+  $("#filterSub").querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{
+    FILTER=b.dataset.filter; closeHam(); renderAll();
+  });
+}
+function downloadCSV(){
+  const cols=["section","category","title","source","date","summary","image","link","tags","featured","eyebrow"];
+  const rows=[cols.join(",")];
+  const q=v=>{v=v==null?"":String(v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
+  visibleArticles().concat(visibleMisc()).forEach(r=>rows.push(cols.map(c=>q(r[c])).join(",")));
+  const blob=new Blob([rows.join("\n")],{type:"text/csv"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="oscar-heller-clips.csv";
+  document.body.appendChild(a);a.click();a.remove();
+}
+function closeHamSubs(){
+  document.querySelectorAll(".ham-sub.open").forEach(s=>s.classList.remove("open"));
+  document.querySelectorAll('.ham-item[aria-expanded="true"]').forEach(b=>b.setAttribute("aria-expanded","false"));
+}
+function closeHam(){
+  $("#hamburgerPanel").classList.remove("open");
+  $("#hamburgerBtn").setAttribute("aria-expanded","false");
+  closeHamSubs();
+}
+function toggleHam(){
+  const open=$("#hamburgerPanel").classList.contains("open");
+  if(open){ closeHam(); } else {
+    $("#hamburgerPanel").classList.add("open");
+    $("#hamburgerBtn").setAttribute("aria-expanded","true");
+  }
+}
+$("#hamburgerBtn").addEventListener("click",e=>{e.stopPropagation();toggleHam();});
+$("#hamburgerPanel").addEventListener("click",e=>e.stopPropagation());
+document.addEventListener("click",closeHam);
+
+["hamFilterBtn","hamSortBtn","hamExportBtn"].forEach(id=>{
+  const btn=$("#"+id);
+  btn.addEventListener("click",e=>{
+    e.stopPropagation();
+    const targetId=btn.dataset.target;
+    const sub=$("#"+targetId);
+    const willOpen=!sub.classList.contains("open");
+    closeHamSubs();
+    if(willOpen){ sub.classList.add("open"); btn.setAttribute("aria-expanded","true"); }
+  });
+});
+
+$("#sortSub").querySelectorAll("[data-sort]").forEach(b=>b.onclick=()=>{
+  SORT=b.dataset.sort;
+  $("#sortSub").querySelectorAll("[data-sort]").forEach(x=>x.setAttribute("aria-checked",x.dataset.sort===SORT));
+  closeHam(); renderAll();
+});
+
+$("#exportSub").querySelector('[data-export="print"]').onclick=()=>{closeHam();window.print();};
+$("#exportSub").querySelector('[data-export="csv"]').onclick=()=>{closeHam();downloadCSV();};
+
+$("#hamSearchBtn").addEventListener("click",()=>{
+  closeHam();
+  const s=$("#search");
+  s.scrollIntoView({behavior:"smooth",block:"center"});
+  s.focus();
+});
 
 /* ---------- load data ---------- */
 function seat(records){
