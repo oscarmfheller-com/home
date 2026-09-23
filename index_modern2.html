@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<script>
+/* Aggressive cache-busting: force a fresh, uniquely-timestamped navigation
+   the first time this page is opened, and scrub any previously-registered
+   service workers / caches that could be serving a stale copy. */
+(function(){
+  var pageUrl = new URL(window.location.href);
+  if (!pageUrl.searchParams.has('v')) {
+    pageUrl.searchParams.set('v', Date.now().toString());
+    window.location.replace(pageUrl.href);
+  }
+})();
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(function(regs){
+    regs.forEach(function(r){ r.unregister(); });
+  }).catch(function(){});
+}
+if (window.caches && caches.keys) {
+  caches.keys().then(function(keys){
+    keys.forEach(function(k){ caches.delete(k); });
+  }).catch(function(){});
+}
+</script>
+<title>Oscar Manuel Heller</title>
+<style>
+/* ============================================================
+   Palette + type — carried over verbatim from index.html
+   ============================================================ */
+:root{
+  --navy:#0A2540;
+  --blue:#175E9E;
+  --blue-2:#2E77B8;
+  --blue-soft:#EAF1F8;
+  --bg:#F3F6FA;
+  --panel:#FFFFFF;
+  --ink:#14212E;
+  --muted:#5C6B7A;
+  --line:#D6E0EC;
+  --line-strong:#B9C8DA;
+  --serif:Georgia,"Times New Roman","Nimbus Roman",serif;
+  --shadow:0 8px 26px -18px rgba(10,37,64,.45);
+
+  /* rhythm tokens — everything below is a multiple of 8px */
+  --rhythm-1:8px;
+  --rhythm-2:16px;
+  --rhythm-3:24px;
+  --rhythm-4:32px;
+  --rhythm-5:40px;
+  --rhythm-6:56px;
+  --header-brand-h:72px;   /* masthead row */
+  --header-nav-h:44px;     /* nav row */
+  --radius:10px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--serif);font-size:17px;line-height:1.6;
+}
+a{color:var(--blue-2);text-decoration:none}
+a:hover{text-decoration:underline}
+img{max-width:100%;display:block}
+.wrap{max-width:1180px;margin:0 auto;padding-left:24px;padding-right:24px}
+.eyebrow{
+  font-variant:small-caps;letter-spacing:.14em;font-weight:700;
+  font-size:13px;color:var(--blue);margin:0;
+}
+
+/* ============================================================
+   Masthead — two fixed-height rows, hairline between, sticky.
+   72px brand row + 44px nav row = 116px total, matched to the
+   reference's compact identity-bar-over-nav-strip rhythm.
+   ============================================================ */
+.site-header{
+  position:sticky;top:0;z-index:40;
+  background:rgba(243,246,250,.96);backdrop-filter:blur(6px);
+  border-bottom:1px solid var(--line);
+}
+.masthead{
+  position:relative;
+  height:var(--header-brand-h);
+  display:flex;align-items:center;justify-content:center;
+  text-align:center;
+}
+
+/* ---------- hamburger: Filter / Sort / Export / Search ---------- */
+.hamburger-btn{
+  position:absolute;right:24px;top:50%;transform:translateY(-50%);
+  width:38px;height:38px;border-radius:9px;
+  background:var(--panel);border:1px solid var(--line-strong);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.hamburger-btn:hover{border-color:var(--blue)}
+.hamburger-btn svg{width:19px;height:19px;stroke:var(--navy)}
+.hamburger-panel{
+  position:absolute;right:24px;top:calc(100% + 8px);z-index:60;
+  background:var(--panel);border:1px solid var(--line-strong);border-radius:10px;
+  box-shadow:var(--shadow);min-width:230px;padding:6px;display:none;
+}
+.hamburger-panel.open{display:block}
+.ham-group{border-bottom:1px solid var(--line)}
+.ham-group:last-of-type{border-bottom:0}
+.ham-item{
+  width:100%;text-align:left;font-family:var(--serif);font-size:14.5px;color:var(--ink);
+  background:none;border:0;border-radius:7px;padding:9px 10px;cursor:pointer;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+}
+.ham-item:hover{background:var(--blue-soft)}
+.ham-item .car{font-size:11px;color:var(--muted);transition:transform .15s ease}
+.ham-item[aria-expanded="true"] .car{transform:rotate(180deg)}
+.ham-sub{display:none;padding:0 0 6px 10px}
+.ham-sub.open{display:block}
+.ham-sub button{
+  width:100%;text-align:left;font-family:var(--serif);font-size:14px;color:var(--ink);
+  background:none;border:0;border-radius:7px;padding:7px 10px;cursor:pointer;display:block;
+}
+.ham-sub button:hover{background:var(--blue-soft)}
+.ham-sub button[aria-checked="true"],.ham-sub button.active{color:var(--blue);font-weight:700}
+.ham-item--flat{gap:10px;justify-content:flex-start}
+.ham-item--flat svg{width:15px;height:15px;fill:var(--muted);flex:0 0 auto}
+.masthead .brand{
+  font-weight:700;font-size:24px;letter-spacing:-.01em;color:var(--navy);
+  line-height:1.15;
+}
+.masthead .brand small{
+  display:block;font-weight:400;font-size:13px;color:var(--muted);
+  font-variant:small-caps;letter-spacing:.1em;margin-top:2px;
+}
+.nav-row{
+  height:var(--header-nav-h);border-top:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;
+}
+.nav-row nav{display:flex;align-items:center;gap:32px;flex-wrap:wrap;justify-content:center}
+.nav-row a{
+  font-family:var(--serif);font-variant:small-caps;letter-spacing:.1em;
+  font-size:14px;color:var(--navy);font-weight:700;
+}
+.nav-row a:hover{color:var(--blue);text-decoration:none}
+
+/* ============================================================
+   Intro band — bio + status, no left rail. A single centered
+   editorial column, the way the reference introduces the author
+   at the top of the page rather than in a persistent sidebar.
+   ============================================================ */
+.intro{padding:var(--rhythm-5) 0 var(--rhythm-4);border-bottom:1px solid var(--line)}
+.intro__grid{display:grid;grid-template-columns:1fr 320px;gap:var(--rhythm-5);align-items:start}
+.intro h1{font-size:38px;line-height:1.08;letter-spacing:-.01em;margin:0 0 6px;color:var(--navy)}
+.intro .byline{font-variant:small-caps;letter-spacing:.1em;color:var(--blue);font-size:14px;margin:0 0 var(--rhythm-2)}
+.intro p.lede{font-size:17px;color:#26404f;margin:0 0 var(--rhythm-3);max-width:62ch}
+.fields dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0}
+.fields dt{font-variant:small-caps;letter-spacing:.08em;font-size:12.5px;color:var(--muted);padding-top:2px}
+.fields dd{margin:0;font-size:14.5px;color:var(--ink)}
+.reach{display:flex;flex-wrap:wrap;gap:6px 16px;margin:var(--rhythm-2) 0 0;font-size:14px}
+.reach a .up{font-size:11px;vertical-align:2px}
+.status-card{
+  background:var(--navy);color:#fff;border-radius:var(--radius);
+  padding:var(--rhythm-3);box-shadow:var(--shadow);
+}
+.status-card .eyebrow{color:#8FB6DB}
+.status-card p{margin:6px 0 0;font-size:16px;line-height:1.55}
+.intro__aside{display:flex;flex-direction:column;gap:var(--rhythm-2)}
+.portrait{
+  width:112px;height:112px;border-radius:var(--radius);position:relative;overflow:hidden;
+  background:linear-gradient(150deg,var(--blue),var(--navy));
+  border:1px solid var(--line);box-shadow:var(--shadow);align-self:flex-end;
+}
+.portrait::after{
+  content:"OH";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:38px;font-weight:700;letter-spacing:.02em;
+}
+.portrait img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
+
+/* ============================================================
+   Controls — search + desk filter, one rhythm-3 band.
+   ============================================================ */
+.controls{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--rhythm-3);
+  padding:var(--rhythm-3) 0;flex-wrap:wrap;
+}
+.search-wrap{position:relative;flex:1 1 280px;max-width:380px}
+.search-wrap input{
+  width:100%;font-family:var(--serif);font-size:15px;color:var(--ink);
+  padding:10px 12px 10px 36px;border:1px solid var(--line-strong);border-radius:9px;background:#fff;
+}
+.search-wrap input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
+.search-wrap svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:16px;height:16px;fill:var(--muted)}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{
+  font-family:var(--serif);font-variant:small-caps;letter-spacing:.08em;
+  border:1px solid var(--line-strong);background:transparent;color:var(--navy);
+  border-radius:999px;padding:7px 14px;font-size:14px;cursor:pointer;
+}
+.pill.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.pill:hover{border-color:var(--blue)}
+
+/* ============================================================
+   Category sections — the "desk" rhythm. rhythm-6 (56px) between
+   sections; rhythm-3 (24px) header-to-first-card gap; rhythm-3
+   gutters between cards, held constant at every breakpoint.
+   ============================================================ */
+main{padding-bottom:var(--rhythm-6)}
+
+/* ---------- collapsible "news desks" ---------- */
+.desks-toggle{
+  width:100%;display:flex;align-items:center;gap:10px;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px var(--rhythm-3);margin-top:var(--rhythm-4);cursor:pointer;
+  box-shadow:var(--shadow);
+}
+.desks-toggle:hover{border-color:var(--blue)}
+.desks-toggle .chev{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:20px;height:20px;color:var(--blue);flex:0 0 auto;
+  transition:transform .18s ease;
+}
+.desks-toggle[aria-expanded="true"] .chev{transform:rotate(90deg)}
+.desks-toggle .label{
+  font-variant:small-caps;letter-spacing:.12em;font-weight:700;font-size:15px;color:var(--navy);
+}
+.desks-toggle .hint{margin-left:auto;font-size:12px;color:var(--muted);font-variant:small-caps;letter-spacing:.08em}
+.desks-collapse{display:none}
+.desks-collapse.open{display:block}
+
+.desk{margin-top:var(--rhythm-6);scroll-margin-top:150px}
+.desk-head{
+  display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+  border-bottom:2px solid var(--navy);padding-bottom:var(--rhythm-1);margin-bottom:var(--rhythm-3);
+}
+.desk-head h2{font-size:22px;margin:0;color:var(--navy);letter-spacing:-.01em}
+.desk-head .count{font-size:13px;color:var(--muted);font-variant:small-caps;letter-spacing:.08em}
+
+.card-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--rhythm-3)}
+.card{
+  display:flex;flex-direction:column;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  overflow:hidden;box-shadow:var(--shadow);
+  transition:border-color .15s ease, transform .15s ease;
+}
+.card:hover{border-color:var(--blue);transform:translateY(-2px)}
+.card .thumb{position:relative;aspect-ratio:3/2;overflow:hidden;background:linear-gradient(150deg,var(--blue),var(--navy))}
+.card .thumb::before{
+  content:attr(data-initials);position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  color:rgba(255,255,255,.9);font-size:28px;font-weight:700;letter-spacing:.03em;
+}
+.card .thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
+.card__body{padding:var(--rhythm-3);display:flex;flex-direction:column;gap:8px}
+.tag{
+  display:inline-block;font-variant:small-caps;letter-spacing:.08em;font-size:12px;font-weight:700;
+  color:var(--blue);background:var(--blue-soft);border-radius:999px;padding:2px 11px;align-self:flex-start;
+}
+.card h3{font-size:20px;line-height:1.25;margin:0;letter-spacing:-.01em}
+.card h3 a{color:var(--navy)}
+.card .meta{font-size:13px;color:var(--muted);margin:0;font-variant:small-caps;letter-spacing:.05em}
+.card .sum{font-size:15px;color:#28404f;margin:0}
+.card .read{font-size:14px;font-weight:700;color:var(--blue-2);margin-top:2px}
+.card .read .up{font-size:11px;vertical-align:2px}
+
+/* featured strip — first item of the first populated desk gets a
+   wider, single-column treatment, echoing the reference's lead
+   post being visually senior to the ones below it */
+.card.featured{grid-column:1 / -1}
+.card.featured .thumb{aspect-ratio:21/9}
+.card.featured h3{font-size:27px}
+
+.misc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--rhythm-3)}
+.misc-card{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:var(--rhythm-2) var(--rhythm-3);box-shadow:var(--shadow);
+}
+.misc-card .tag{background:#eef2f6;color:var(--navy)}
+.misc-card h3{font-size:17px;margin:8px 0 4px}
+.misc-card h3 a{color:var(--navy)}
+.misc-card p{font-size:14.5px;color:#33485a;margin:0}
+
+.empty{background:var(--panel);border:1px dashed var(--line-strong);border-radius:var(--radius);padding:40px 28px;text-align:center;color:var(--muted)}
+.empty h3{margin:0 0 8px;color:var(--navy);font-size:18px}
+
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:6px}
+
+@media (max-width:900px){
+  .intro__grid{grid-template-columns:1fr}
+  .card-grid{grid-template-columns:1fr}
+  .card.featured .thumb{aspect-ratio:16/9}
+  .misc-grid{grid-template-columns:1fr 1fr}
+}
+@media (max-width:640px){
+  body{font-size:16px}
+  :root{--header-brand-h:64px;--header-nav-h:40px}
+  .masthead .brand{font-size:20px}
+  .nav-row nav{gap:18px}
+  .nav-row a{font-size:12.5px}
+  .misc-grid{grid-template-columns:1fr}
+  .hamburger-btn{right:16px}
+  .hamburger-panel{right:16px}
+}
+@media print{
+  .site-header,.controls,.desks-toggle{display:none !important}
+  body{background:#fff}
+  .desks-collapse{display:block !important}
+  .card,.misc-card,.status-card{box-shadow:none;break-inside:avoid;border-color:#999}
+  a{color:#000;text-decoration:none}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="masthead">
+    <div class="brand">Oscar Manuel Heller<small>writer &amp; editor</small></div>
+    <button class="hamburger-btn" id="hamburgerBtn" aria-haspopup="true" aria-expanded="false" aria-label="Open menu">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <div class="hamburger-panel" id="hamburgerPanel" role="menu">
+      <div class="ham-group">
+        <button class="ham-item" id="hamFilterBtn" data-target="filterSub" aria-expanded="false" aria-haspopup="true">Filter <span class="car">▾</span></button>
+        <div class="ham-sub" id="filterSub"></div>
+      </div>
+      <div class="ham-group">
+        <button class="ham-item" id="hamSortBtn" data-target="sortSub" aria-expanded="false" aria-haspopup="true">Sort <span class="car">▾</span></button>
+        <div class="ham-sub" id="sortSub">
+          <button role="menuitemradio" data-sort="new" aria-checked="true">Newest first</button>
+          <button role="menuitemradio" data-sort="old" aria-checked="false">Oldest first</button>
+          <button role="menuitemradio" data-sort="az" aria-checked="false">Title A → Z</button>
+          <button role="menuitemradio" data-sort="za" aria-checked="false">Title Z → A</button>
+          <button role="menuitemradio" data-sort="filed" aria-checked="false">Filed order</button>
+        </div>
+      </div>
+      <div class="ham-group">
+        <button class="ham-item" id="hamExportBtn" data-target="exportSub" aria-expanded="false" aria-haspopup="true">Export <span class="car">▾</span></button>
+        <div class="ham-sub" id="exportSub">
+          <button data-export="print">Print clips</button>
+          <button data-export="csv">Download current view</button>
+        </div>
+      </div>
+      <div class="ham-group">
+        <button class="ham-item ham-item--flat" id="hamSearchBtn">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 2a8 8 0 1 0 4.9 14.3l5.4 5.4 1.4-1.4-5.4-5.4A8 8 0 0 0 10 2Zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12Z"/></svg>
+          Search
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="nav-row">
+    <nav aria-label="Main">
+      <a href="#top">Home</a>
+      <a id="nav-investigative" href="#desk-investigative">Investigative</a>
+      <a id="nav-culture" href="#desk-culture-and-sports">Culture &amp; Sports</a>
+      <a id="nav-politics" href="#desk-politics">Politics</a>
+      <a id="nav-misc" href="#desk-misc">Misc</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top" class="wrap">
+
+  <section class="intro">
+    <div class="intro__grid">
+      <div>
+        <h1 id="rName">Oscar Manuel Heller</h1>
+        <p class="byline">Writer &amp; Editor · Yale</p>
+        <p class="lede" id="rIntro"></p>
+        <div class="fields"><dl id="rFields"></dl></div>
+        <div class="reach">
+          <a href="mailto:oscar.heller@yale.edu">email <span class="up">↗</span></a>
+          <a href="https://muckrack.com/oscar-heller" target="_blank" rel="noopener">muck rack <span class="up">↗</span></a>
+          <a href="https://instagram.com/YOUR_HANDLE" target="_blank" rel="noopener">instagram <span class="up">↗</span></a>
+        </div>
+      </div>
+      <div class="intro__aside">
+        <div class="portrait"><img src="oscar.jpg" alt="Oscar Manuel Heller" onerror="this.style.display='none'"></div>
+        <div class="status-card" id="status" hidden>
+          <p class="eyebrow">Currently</p>
+          <p id="statusText"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="controls">
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 2a8 8 0 1 0 4.9 14.3l5.4 5.4 1.4-1.4-5.4-5.4A8 8 0 0 0 10 2Zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12Z"/></svg>
+      <input id="search" type="search" placeholder="Search for a topic" aria-label="Search for a topic">
+    </div>
+    <div class="pills" id="pills"></div>
+  </div>
+
+  <div id="clips"></div>
+
+</main>
+
+<script>
+"use strict";
+/* ---------- CSV parser (RFC-4180-ish, no dependencies) ---------- */
+function parseCSV(text){
+  const rows=[]; let row=[],f="",i=0,q=false;
+  text=text.replace(/^\uFEFF/,"").replace(/\r\n?/g,"\n");
+  while(i<text.length){
+    const c=text[i];
+    if(q){
+      if(c==='"'){ if(text[i+1]==='"'){f+='"';i+=2;continue;} q=false;i++;continue; }
+      f+=c;i++;continue;
+    }
+    if(c==='"'){q=true;i++;continue;}
+    if(c===','){row.push(f);f="";i++;continue;}
+    if(c==='\n'){row.push(f);rows.push(row);row=[];f="";i++;continue;}
+    f+=c;i++;
+  }
+  if(f.length||row.length){row.push(f);rows.push(row);}
+  return rows.filter(r=>r.length&&r.some(v=>v.trim()!==""));
+}
+function toRecords(rows){
+  if(!rows.length) return [];
+  const head=rows[0].map(h=>h.trim().toLowerCase());
+  return rows.slice(1).map(cells=>{
+    const r={}; head.forEach((k,i)=>r[k]=(cells[i]||"").trim()); return r;
+  });
+}
+
+/* ---------- helpers ---------- */
+const DESKS=["Investigative","Culture and Sports","Politics"];
+const $=s=>document.querySelector(s);
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
+function initials(src){
+  if(!src) return "•";
+  return src.replace(/^The\s+/i,"").split(/\s+/).map(w=>w[0]).join("").slice(0,3).toUpperCase();
+}
+function fmtDate(iso){
+  if(!iso) return "";
+  const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(iso); if(!m) return iso;
+  const months=["January","February","March","April","May","June","July","August","September","October","November","December"];
+  return months[+m[2]-1]+" "+(+m[3])+", "+m[1];
+}
+
+/* ---------- state ---------- */
+let ALL=[], FILTER="all", QUERY="", SORT="new", DESKS_OPEN=false;
+function sortList(list){
+  const a=list.slice();
+  if(SORT==="az") a.sort((x,y)=>x.title.localeCompare(y.title));
+  else if(SORT==="za") a.sort((x,y)=>y.title.localeCompare(x.title));
+  else if(SORT==="new") a.sort((x,y)=>(y.date||"").localeCompare(x.date||""));
+  else if(SORT==="old") a.sort((x,y)=>(x.date||"").localeCompare(y.date||""));
+  return a; /* "filed" keeps CSV order */
+}
+function bio(){return ALL.filter(r=>r.section==="BIO");}
+function articles(){return ALL.filter(r=>r.section==="CURRENT"&&r.category!=="Status");}
+function statusRec(){return ALL.find(r=>r.section==="CURRENT"&&r.category==="Status");}
+function misc(){return ALL.filter(r=>r.section==="MISC");}
+function matchQuery(r){
+  if(!QUERY) return true;
+  const hay=[r.title,r.source,r.summary,r.category,r.tags,r.eyebrow].join(" ").toLowerCase();
+  return hay.includes(QUERY);
+}
+function visibleArticles(){
+  return articles().filter(r=>matchQuery(r)).filter(r=>FILTER==="all"||FILTER===r.category);
+}
+function visibleMisc(){
+  if(FILTER!=="all"&&FILTER!=="Misc") return [];
+  return misc().filter(r=>matchQuery(r));
+}
+
+/* ---------- render: intro ---------- */
+function renderBio(){
+  const intro=bio().find(r=>r.category==="Intro");
+  $("#rIntro").textContent=intro?intro.summary:"";
+  const dl=$("#rFields"); dl.innerHTML="";
+  bio().filter(r=>r.category==="Field").forEach(r=>{
+    dl.insertAdjacentHTML("beforeend",`<dt>${esc(r.title)}</dt><dd>${esc(r.summary)}</dd>`);
+  });
+}
+
+/* ---------- render: cards ---------- */
+function articleCard(r,featured){
+  const img=r.image&&r.image!=="#"
+    ? `<img src="${esc(r.image)}" alt="" loading="lazy" onerror="this.style.display='none'">` : "";
+  const meta=[r.source,fmtDate(r.date)].filter(Boolean).join(" · ");
+  return `<article class="card${featured?" featured":""}" id="${esc(r._id)}">
+    <div class="thumb" data-initials="${esc(initials(r.source))}">${img}</div>
+    <div class="card__body">
+      <span class="tag">${esc(r.eyebrow||r.category)}</span>
+      <h3><a href="${esc(r.link)}" target="_blank" rel="noopener">${esc(r.title)}</a></h3>
+      <p class="meta">${esc(meta)}</p>
+      <p class="sum">${esc(r.summary)}</p>
+      <a class="read" href="${esc(r.link)}" target="_blank" rel="noopener">Read the piece${r.source?` in ${esc(r.source)}`:""} <span class="up">↗</span></a>
+    </div>
+  </article>`;
+}
+function miscCard(r){
+  const hasLink=r.link&&r.link!=="#";
+  const title=hasLink?`<a href="${esc(r.link)}" target="_blank" rel="noopener">${esc(r.title)}</a>`:esc(r.title);
+  return `<div class="misc-card" id="${esc(r._id)}">
+    <span class="tag">${esc(r.category)}</span>
+    <h3>${title}</h3>
+    <p>${esc(r.summary)}</p>
+  </div>`;
+}
+
+function renderRight(){
+  const st=statusRec();
+  if(st){$("#status").hidden=false;$("#statusText").textContent=st.summary;}else{$("#status").hidden=true;}
+
+  const wrap=$("#clips"); wrap.innerHTML="";
+  const vis=visibleArticles(), vmisc=visibleMisc();
+
+  if(!vis.length && !vmisc.length){
+    wrap.innerHTML=`<div class="empty"><h3>No clips match "${esc(QUERY)}".</h3>
+      <p>Try another topic, or reset the filter.</p></div>`;
+    return;
+  }
+
+  const eligibleDesks=DESKS.filter(desk=>FILTER==="all"||FILTER===desk);
+  const anyDeskItems=eligibleDesks.some(desk=>vis.some(r=>r.category===desk));
+
+  if(anyDeskItems){
+    /* auto-reveal the desks once the person filters to one, or a search
+       query actually matches something — the collapse is a resting state,
+       not an obstacle to results the person went looking for */
+    if(FILTER!=="all" || QUERY){ DESKS_OPEN=true; }
+
+    wrap.insertAdjacentHTML("beforeend",
+      `<button type="button" class="desks-toggle" id="desksToggle" aria-expanded="${DESKS_OPEN}" aria-controls="desksContainer">
+        <span class="chev" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+        </span>
+        <span class="label">Visit news desks</span>
+        <span class="hint">${DESKS_OPEN?"Hide":"Show"} Investigative, Culture &amp; Sports, Politics</span>
+      </button>
+      <div class="desks-collapse${DESKS_OPEN?" open":""}" id="desksContainer"></div>`);
+
+    const desksContainer=$("#desksContainer");
+    let firstFeaturedUsed=false;
+    eligibleDesks.forEach(desk=>{
+      const items=sortList(vis.filter(r=>r.category===desk));
+      if(!items.length) return;
+      const cards=items.map(r=>{
+        const isFeature=!firstFeaturedUsed && r.featured && r.featured.toLowerCase()==="true";
+        if(isFeature) firstFeaturedUsed=true;
+        return articleCard(r,isFeature);
+      }).join("");
+      desksContainer.insertAdjacentHTML("beforeend",
+        `<section class="desk" id="desk-${desk.replace(/\s+/g,'-').toLowerCase()}">
+          <div class="desk-head"><h2>${esc(desk)}</h2><span class="count">${items.length} clip${items.length>1?"s":""}</span></div>
+          <div class="card-grid">${cards}</div>
+        </section>`);
+    });
+
+    $("#desksToggle").addEventListener("click",()=>{
+      DESKS_OPEN=!DESKS_OPEN;
+      $("#desksToggle").setAttribute("aria-expanded",DESKS_OPEN);
+      $("#desksToggle").querySelector(".hint").textContent=(DESKS_OPEN?"Hide":"Show")+" Investigative, Culture & Sports, Politics";
+      $("#desksContainer").classList.toggle("open",DESKS_OPEN);
+    });
+  }
+
+  if(vmisc.length){
+    wrap.insertAdjacentHTML("beforeend",
+      `<section class="desk" id="desk-misc">
+        <div class="desk-head"><h2>Miscellany</h2><span class="count">${vmisc.length} item${vmisc.length>1?"s":""}</span></div>
+        <div class="misc-grid">${vmisc.map(miscCard).join("")}</div>
+      </section>`);
+  }
+}
+
+function renderPills(){
+  const opts=[["all","All desks"],...DESKS.map(d=>[d,d]),["Misc","Misc"]];
+  $("#pills").innerHTML=opts.map(([v,l])=>
+    `<button type="button" class="pill${v===FILTER?" active":""}" data-filter="${esc(v)}">${esc(l)}</button>`).join("");
+  $("#pills").querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{
+    FILTER=b.dataset.filter; renderAll();
+  });
+}
+
+function renderAll(){renderBio();renderRight();renderPills();renderHamFilter();}
+
+$("#search").addEventListener("input",e=>{QUERY=e.target.value.trim().toLowerCase();renderAll();});
+
+/* ---------- hamburger: Filter / Sort / Export / Search ---------- */
+function renderHamFilter(){
+  const opts=[["all","All desks"],...DESKS.map(d=>[d,d]),["Misc","Miscellany"]];
+  $("#filterSub").innerHTML=opts.map(([v,l])=>
+    `<button role="menuitemradio" data-filter="${esc(v)}" aria-checked="${v===FILTER}">${esc(l)}</button>`).join("");
+  $("#filterSub").querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{
+    FILTER=b.dataset.filter; closeHam(); renderAll();
+  });
+}
+function downloadCSV(){
+  const cols=["section","category","title","source","date","summary","image","link","tags","featured","eyebrow"];
+  const rows=[cols.join(",")];
+  const q=v=>{v=v==null?"":String(v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
+  visibleArticles().concat(visibleMisc()).forEach(r=>rows.push(cols.map(c=>q(r[c])).join(",")));
+  const blob=new Blob([rows.join("\n")],{type:"text/csv"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="oscar-heller-clips.csv";
+  document.body.appendChild(a);a.click();a.remove();
+}
+function closeHamSubs(){
+  document.querySelectorAll(".ham-sub.open").forEach(s=>s.classList.remove("open"));
+  document.querySelectorAll('.ham-item[aria-expanded="true"]').forEach(b=>b.setAttribute("aria-expanded","false"));
+}
+function closeHam(){
+  $("#hamburgerPanel").classList.remove("open");
+  $("#hamburgerBtn").setAttribute("aria-expanded","false");
+  closeHamSubs();
+}
+function toggleHam(){
+  const open=$("#hamburgerPanel").classList.contains("open");
+  if(open){ closeHam(); } else {
+    $("#hamburgerPanel").classList.add("open");
+    $("#hamburgerBtn").setAttribute("aria-expanded","true");
+  }
+}
+$("#hamburgerBtn").addEventListener("click",e=>{e.stopPropagation();toggleHam();});
+$("#hamburgerPanel").addEventListener("click",e=>e.stopPropagation());
+document.addEventListener("click",closeHam);
+
+["hamFilterBtn","hamSortBtn","hamExportBtn"].forEach(id=>{
+  const btn=$("#"+id);
+  btn.addEventListener("click",e=>{
+    e.stopPropagation();
+    const targetId=btn.dataset.target;
+    const sub=$("#"+targetId);
+    const willOpen=!sub.classList.contains("open");
+    closeHamSubs();
+    if(willOpen){ sub.classList.add("open"); btn.setAttribute("aria-expanded","true"); }
+  });
+});
+
+$("#sortSub").querySelectorAll("[data-sort]").forEach(b=>b.onclick=()=>{
+  SORT=b.dataset.sort;
+  $("#sortSub").querySelectorAll("[data-sort]").forEach(x=>x.setAttribute("aria-checked",x.dataset.sort===SORT));
+  closeHam(); renderAll();
+});
+
+$("#exportSub").querySelector('[data-export="print"]').onclick=()=>{closeHam();window.print();};
+$("#exportSub").querySelector('[data-export="csv"]').onclick=()=>{closeHam();downloadCSV();};
+
+$("#hamSearchBtn").addEventListener("click",()=>{
+  closeHam();
+  const s=$("#search");
+  s.scrollIntoView({behavior:"smooth",block:"center"});
+  s.focus();
+});
+
+/* ---------- load data ---------- */
+function seat(records){
+  ALL=records.map((r,i)=>({...r,section:(r.section||"").toUpperCase(),_id:"rec-"+i}));
+  renderAll();
+}
+function renderNeedsFile(){
+  $("#clips").innerHTML=`<div class="empty">
+    <h3>Point the page at content_modern.csv</h3>
+    <p>Open this page from a folder that also contains <strong>content_modern.csv</strong> (serve the folder).</p>
+  </div>`;
+}
+async function init(){
+  try{
+    /* aggressive cache-bust on the data fetch too */
+    const res=await fetch("content_modern.csv?v="+Date.now(),{cache:"no-store"});
+    if(!res.ok) throw 0;
+    seat(toRecords(parseCSV(await res.text())));
+  }catch(e){ renderNeedsFile(); }
+}
+init();
+</script>
+</body>
+</html>
