@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Oscar Manuel Heller</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&family=Josefin+Sans:wght@400;500;600;700&display=swap');
+
+    :root {
+      --navy: #0b1f2d;
+      --blue: #1d5d9e;
+      --blue-2: #2a6ca8;
+      --blue-soft: #edf4fb;
+      --bg: #f5f3ef;
+      --panel: #ffffff;
+      --ink: #171d20;
+      --muted: #5d6368;
+      --line: #e4dfd7;
+      --line-strong: #d3cdc2;
+      --shadow: 0 18px 40px rgba(11, 31, 45, 0.08);
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'Inter', Arial, sans-serif;
+      --masthead: 'Josefin Sans', 'Inter', Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    img { max-width: 100%; display: block; }
+
+    .container {
+      width: min(1120px, calc(100% - 38px));
+      margin: 0 auto;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(245, 243, 239, 0.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(23, 29, 32, 0.12);
+    }
+
+    .masthead {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      min-height: 84px;
+      width: min(1220px, calc(100% - 28px));
+      margin: 0 auto;
+      gap: 18px;
+    }
+
+    .masthead__spacer { }
+
+    .brand {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: var(--navy);
+      width: 100%;
+    }
+
+    .brand__name {
+      font-family: var(--masthead);
+      font-size: clamp(1.15rem, 1.4vw, 1.8rem);
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      min-height: 44px;
+    }
+
+    .nav a {
+      font-family: var(--masthead);
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink);
+      font-weight: 600;
+      line-height: 1;
+    }
+
+    .nav a:hover {
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    .hero {
+      padding: 26px 0 18px;
+    }
+
+    .hero__panel {
+      display: grid;
+      grid-template-columns: 1.7fr 0.9fr;
+      gap: 22px;
+      align-items: center;
+      background: transparent;
+      border-top: 1px solid rgba(23, 29, 32, 0.1);
+      border-bottom: 1px solid rgba(23, 29, 32, 0.1);
+      padding: 28px 0 18px;
+    }
+
+    .hero__content {
+      padding-right: 10px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      margin: 0 0 10px;
+      font-size: 0.68rem;
+      letter-spacing: 0.17em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .hero__title {
+      margin: 0;
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: clamp(3.1rem, 6vw, 6.6rem);
+      line-height: 0.82;
+      letter-spacing: -0.06em;
+      color: var(--navy);
+    }
+
+    .hero__lede {
+      margin: 18px 0 0;
+      max-width: 760px;
+      font-size: clamp(1rem, 1.2vw, 1.18rem);
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    .hero__meta {
+      margin-top: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 18px;
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .hero__aside {
+      justify-self: end;
+      width: min(100%, 280px);
+      padding-left: 18px;
+      border-left: 1px solid rgba(23, 29, 32, 0.08);
+    }
+
+    .mini-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 18px 18px 16px;
+    }
+
+    .mini-card__label {
+      margin: 0 0 8px;
+      font-size: 0.64rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .mini-card__text {
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--ink);
+    }
+
+    .mini-card__link {
+      display: inline-flex;
+      margin-top: 14px;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--blue-2);
+      font-weight: 700;
+    }
+
+    .main {
+      padding: 10px 0 60px;
+    }
+
+    .section-top {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 18px;
+      margin: 20px 0 16px;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: clamp(2rem, 3vw, 3rem);
+      font-family: var(--serif);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      color: var(--navy);
+      line-height: 0.9;
+    }
+
+    .section-sub {
+      font-size: 0.74rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 36px;
+    }
+
+    .feature-card {
+      display: flex;
+      flex-direction: column;
+      background: var(--panel);
+      border-radius: 22px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      min-height: 100%;
+    }
+
+    .feature-card__image {
+      position: relative;
+      aspect-ratio: 16 / 10;
+      overflow: hidden;
+      background: linear-gradient(135deg, var(--blue), var(--navy));
+    }
+
+    .feature-card__image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .feature-card:hover .feature-card__image img {
+      transform: scale(1.03);
+    }
+
+    .feature-card__body {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 18px 18px 20px;
+    }
+
+    .chip {
+      display: inline-block;
+      align-self: flex-start;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-size: 0.67rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .feature-card__heading {
+      margin: 0;
+      font-size: clamp(1.5rem, 2vw, 2.2rem);
+      line-height: 1.02;
+      letter-spacing: -0.04em;
+      font-weight: 700;
+      font-family: var(--serif);
+    }
+
+    .feature-card__meta {
+      color: var(--muted);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .feature-card__summary {
+      color: #2e3d4d;
+      margin: 0;
+      font-size: 0.96rem;
+      line-height: 1.7;
+    }
+
+    .feature-card__link {
+      margin-top: auto;
+      color: var(--blue-2);
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .category-block {
+      margin-top: 36px;
+    }
+
+    .category-block__head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 2px solid var(--navy);
+      padding-bottom: 10px;
+      margin-bottom: 18px;
+    }
+
+    .category-block__title {
+      margin: 0;
+      color: var(--navy);
+      font-size: clamp(1.6rem, 2vw, 2.2rem);
+      font-family: var(--serif);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+    }
+
+    .category-block__count {
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .article-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .article-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: transform 0.18s ease, border-color 0.18s ease;
+    }
+
+    .article-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--blue);
+    }
+
+    .article-card__media {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      background: linear-gradient(135deg, var(--blue), var(--navy));
+      overflow: hidden;
+    }
+
+    .article-card__media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .article-card__body {
+      padding: 16px 18px 18px;
+    }
+
+    .article-card__eyebrow {
+      display: inline-block;
+      margin-bottom: 8px;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--blue);
+      font-weight: 800;
+    }
+
+    .article-card__heading {
+      margin: 0 0 8px;
+      font-size: clamp(1.3rem, 1.9vw, 1.7rem);
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+      font-family: var(--serif);
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .article-card__meta {
+      margin: 0 0 10px;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .article-card__summary {
+      margin: 0;
+      color: #324860;
+      line-height: 1.7;
+      font-size: 0.96rem;
+    }
+
+    .article-card__link {
+      display: inline-block;
+      margin-top: 12px;
+      color: var(--blue-2);
+      font-size: 0.76rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .misc-list {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .misc-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .misc-card__label {
+      display: inline-block;
+      background: #eef3fa;
+      color: var(--navy);
+      border-radius: 999px;
+      padding: 6px 9px;
+      font-size: 0.64rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .misc-card h3 {
+      margin: 0 0 8px;
+      font-size: 1.3rem;
+      font-family: var(--serif);
+      letter-spacing: -0.03em;
+      color: var(--navy);
+    }
+
+    .misc-card p {
+      margin: 0;
+      line-height: 1.65;
+      color: #304559;
+      font-size: 0.96rem;
+    }
+
+    .empty {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      color: var(--muted);
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .search-wrap {
+      position: relative;
+      flex: 1 1 280px;
+      max-width: 420px;
+    }
+
+    .search-wrap input {
+      width: 100%;
+      border-radius: 999px;
+      border: 1px solid var(--line-strong);
+      background: var(--panel);
+      padding: 12px 16px 12px 42px;
+      font: inherit;
+      color: var(--ink);
+    }
+
+    .search-wrap input:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(23, 94, 158, 0.12);
+    }
+
+    .search-wrap svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      fill: var(--muted);
+    }
+
+    .filter-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .pill {
+      border: 1px solid var(--line-strong);
+      background: transparent;
+      color: var(--navy);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .pill.active {
+      background: var(--navy);
+      color: #fff;
+      border-color: var(--navy);
+    }
+
+    .pill:hover {
+      border-color: var(--blue);
+    }
+
+    @media (max-width: 980px) {
+      .hero__panel {
+        grid-template-columns: 1fr;
+      }
+
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .article-grid,
+      .misc-list {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 14px 0;
+      }
+
+      .nav {
+        gap: 12px;
+      }
+
+      .hero {
+        padding-top: 20px;
+      }
+
+      .hero__content {
+        padding-bottom: 16px;
+      }
+
+      .hero__aside {
+        border-left: 0;
+        border-top: 1px solid rgba(255,255,255,0.12);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="masthead">
+      <div class="masthead__spacer" aria-hidden="true"></div>
+      <div class="brand" aria-label="Oscar Manuel Heller site title">
+        <span class="brand__name">Oscar Manuel Heller</span>
+      </div>
+      <nav class="nav" aria-label="Main navigation">
+        <a href="#top">Home</a>
+        <a href="#featured">Featured</a>
+        <a href="#investigative">Investigative</a>
+        <a href="#culture-sports">Culture &amp; Sports</a>
+        <a href="#politics">Politics</a>
+        <a href="#misc">Misc</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top" class="container main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero__panel">
+        <div class="hero__content">
+          <p class="eyebrow">Yale writer • reporter • editor</p>
+          <h1 id="hero-title" class="hero__title">Oscar<br />Manuel<br />Heller</h1>
+          <p class="hero__lede" id="hero-intro"></p>
+          <div class="hero__meta">
+            <span>Investigative</span>
+            <span>Culture</span>
+            <span>Politics</span>
+            <span>Reporting</span>
+          </div>
+        </div>
+        <div class="hero__aside">
+          <div class="mini-card">
+            <p class="mini-card__label">Current</p>
+            <p class="mini-card__text" id="status-text"></p>
+            <a class="mini-card__link" href="#featured">View work →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="controls">
+      <div class="search-wrap" aria-label="Search stories">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 2a8 8 0 1 0 4.9 14.3l5.4 5.4 1.4-1.4-5.4-5.4A8 8 0 0 0 10 2Zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12Z"/></svg>
+        <input id="searchInput" type="search" placeholder="Search by topic or title" />
+      </div>
+      <div class="filter-pills" id="filterPills" aria-label="Filter stories"></div>
+    </div>
+
+    <section id="featured" class="feature-grid" aria-label="Featured stories"></section>
+
+    <div id="contentRoot"></div>
+  </main>
+
+  <script>
+    const CATEGORY_ORDER = ["Investigative", "Culture and Sports", "Politics"];
+
+    function parseCSV(text) {
+      const rows = [];
+      let row = [];
+      let value = "";
+      let inQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        const next = text[i + 1];
+
+        if (inQuotes) {
+          if (ch === '"') {
+            if (next === '"') {
+              value += '"';
+              i++;
+            } else {
+              inQuotes = false;
+            }
+          } else {
+            value += ch;
+          }
+          continue;
+        }
+
+        if (ch === '"') {
+          inQuotes = true;
+          continue;
+        }
+
+        if (ch === ',') {
+          row.push(value);
+          value = "";
+          continue;
+        }
+
+        if (ch === '\n') {
+          row.push(value);
+          if (row.some(v => v.trim() !== '')) rows.push(row);
+          row = [];
+          value = "";
+          continue;
+        }
+
+        if (ch === '\r') continue;
+
+        value += ch;
+      }
+
+      if (value.length || row.length) {
+        row.push(value);
+        if (row.some(v => v.trim() !== '')) rows.push(row);
+      }
+
+      if (!rows.length) return [];
+
+      const headers = rows[0].map(h => h.trim().toLowerCase());
+      return rows.slice(1).map(cells => {
+        const record = {};
+        headers.forEach((header, index) => {
+          record[header] = (cells[index] || '').trim();
+        });
+        return record;
+      });
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>"']/g, char => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      }[char]));
+    }
+
+    function fmtDate(value) {
+      if (!value) return '';
+      const match = /^([0-9]{4})-([0-9]{2})-([0-9]{2})/.exec(value);
+      if (!match) return value;
+      const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      return `${months[Number(match[2]) - 1]} ${Number(match[3])}, ${match[1]}`;
+    }
+
+    function initials(name) {
+      if (!name) return '•';
+      return name.replace(/^The\s+/i, '').split(/\s+/).filter(Boolean).slice(0, 3).map(part => part[0]).join('').toUpperCase();
+    }
+
+    function getVisibleRecords(records, currentFilter, searchTerm) {
+      const term = searchTerm.trim().toLowerCase();
+      return records.filter(record => {
+        const section = (record.section || '').toUpperCase();
+        const category = record.category || '';
+        const haystack = [
+          record.title,
+          record.summary,
+          record.source,
+          record.tags,
+          record.category,
+          record.eyebrow
+        ].join(' ').toLowerCase();
+
+        const filterOk = currentFilter === 'all' || category === currentFilter || (currentFilter === 'Misc' && section === 'MISC');
+        const searchOk = !term || haystack.includes(term);
+        return filterOk && searchOk;
+      });
+    }
+
+    function renderFeatureGrid(records) {
+      const featured = records.filter(record => record.featured === 'true' || record.featured === 'True');
+      const cards = featured.slice(0, 3).map((record, index) => {
+        const image = record.image && record.image !== '#' ? `<img src="${escapeHtml(record.image)}" alt="${escapeHtml(record.title)}" onerror="this.style.display='none'" />` : `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:2.2rem;font-weight:800;color:rgba(255,255,255,0.9);letter-spacing:0.08em;">${escapeHtml(initials(record.source || record.title))}</div>`;
+        const className = index === 0 ? 'feature-card feature-card--large' : 'feature-card';
+        const summary = record.summary ? `<p class="feature-card__summary">${escapeHtml(record.summary)}</p>` : '';
+        const meta = [record.source, fmtDate(record.date)].filter(Boolean).join(' • ');
+
+        return `
+          <article class="${className}">
+            <div class="feature-card__image">${image}</div>
+            <div class="feature-card__body">
+              <span class="chip">${escapeHtml(record.category || record.eyebrow || 'Feature')}</span>
+              <h2 class="feature-card__heading"><a href="${escapeHtml(record.link || '#')}" target="_blank" rel="noopener">${escapeHtml(record.title)}</a></h2>
+              <div class="feature-card__meta">${escapeHtml(meta)}</div>
+              ${summary}
+              <a class="feature-card__link" href="${escapeHtml(record.link || '#')}" target="_blank" rel="noopener">Read the piece →</a>
+            </div>
+          </article>
+        `;
+      });
+
+      const container = document.getElementById('featured');
+      container.innerHTML = cards.join('');
+    }
+
+    function renderCategorySections(records) {
+      const root = document.getElementById('contentRoot');
+      const categoryRecords = CATEGORY_ORDER.map(category => ({
+        category,
+        items: records.filter(record => record.category === category)
+      }));
+
+      const html = categoryRecords.map(({ category, items }) => {
+        if (!items.length) return '';
+        const cards = items.map((item) => {
+          const image = item.image && item.image !== '#' ? `<img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.title)}" onerror="this.style.display='none'" />` : '';
+          return `
+            <article class="article-card">
+              <div class="article-card__media">${image || `<div style="display:flex;align-items:center;justify-content:center;height:100%;background:linear-gradient(135deg,var(--blue),var(--navy));color:rgba(255,255,255,0.9);font-size:2rem;font-weight:800;letter-spacing:0.08em;">${escapeHtml(initials(item.source || item.title))}</div>`}</div>
+              <div class="article-card__body">
+                <span class="article-card__eyebrow">${escapeHtml(item.eyebrow || item.category)}</span>
+                <h3 class="article-card__heading"><a href="${escapeHtml(item.link || '#')}" target="_blank" rel="noopener">${escapeHtml(item.title)}</a></h3>
+                <p class="article-card__meta">${escapeHtml([item.source, fmtDate(item.date)].filter(Boolean).join(' • '))}</p>
+                <p class="article-card__summary">${escapeHtml(item.summary)}</p>
+                <a class="article-card__link" href="${escapeHtml(item.link || '#')}" target="_blank" rel="noopener">Read more →</a>
+              </div>
+            </article>
+          `;
+        }).join('');
+
+        return `
+          <section id="${escapeHtml(category.toLowerCase().replace(/\s+/g, '-'))}" class="category-block" aria-labelledby="${escapeHtml(category.toLowerCase().replace(/\s+/g, '-'))}-title">
+            <div class="category-block__head">
+              <h2 id="${escapeHtml(category.toLowerCase().replace(/\s+/g, '-'))}-title" class="category-block__title">${escapeHtml(category)}</h2>
+              <span class="category-block__count">${items.length} ${items.length === 1 ? 'story' : 'stories'}</span>
+            </div>
+            <div class="article-grid">${cards}</div>
+          </section>
+        `;
+      }).join('');
+
+      const miscRecords = records.filter(record => (record.section || '').toUpperCase() === 'MISC');
+      const miscHtml = miscRecords.length ? `
+        <section id="misc" class="category-block" aria-labelledby="misc-title">
+          <div class="category-block__head">
+            <h2 id="misc-title" class="category-block__title">Miscellany</h2>
+            <span class="category-block__count">${miscRecords.length} ${miscRecords.length === 1 ? 'item' : 'items'}</span>
+          </div>
+          <div class="misc-list">
+            ${miscRecords.map(item => `
+              <article class="misc-card">
+                <span class="misc-card__label">${escapeHtml(item.category || 'Misc')}</span>
+                <h3><a href="${escapeHtml(item.link || '#')}" target="_blank" rel="noopener">${escapeHtml(item.title)}</a></h3>
+                <p>${escapeHtml(item.summary)}</p>
+              </article>
+            `).join('')}
+          </div>
+        </section>
+      ` : '';
+
+      root.innerHTML = `${html}${miscHtml}`;
+    }
+
+    function renderFilters() {
+      const pills = document.getElementById('filterPills');
+      const options = [
+        { value: 'all', label: 'All' },
+        ...CATEGORY_ORDER.map(cat => ({ value: cat, label: cat })),
+        { value: 'Misc', label: 'Misc' }
+      ];
+
+      pills.innerHTML = options.map(option => `
+        <button type="button" class="pill ${state.filter === option.value ? 'active' : ''}" data-filter="${escapeHtml(option.value)}">${escapeHtml(option.label)}</button>
+      `).join('');
+
+      pills.querySelectorAll('.pill').forEach(button => {
+        button.addEventListener('click', () => {
+          state.filter = button.dataset.filter;
+          render();
+        });
+      });
+    }
+
+    function renderHeaderInfo(records) {
+      const introRecord = records.find(r => r.section === 'BIO' && r.category === 'Intro');
+      const statusRecord = records.find(r => r.section === 'CURRENT' && r.category === 'Status');
+
+      const introEl = document.getElementById('hero-intro');
+      const statusEl = document.getElementById('status-text');
+
+      if (introEl) introEl.textContent = introRecord ? introRecord.summary : 'Writer and editor reporting across investigations, culture, sports, and politics.';
+      if (statusEl) statusEl.textContent = statusRecord ? statusRecord.summary : 'Available for editorial, reporting, and writing work.';
+    }
+
+    function render() {
+      const records = state.records;
+      const visible = getVisibleRecords(records, state.filter, state.search);
+      renderHeaderInfo(records);
+      renderFeatureGrid(visible);
+      renderCategorySections(visible);
+      renderFilters();
+    }
+
+    async function loadCsv() {
+      const csvPath = 'content_modern.csv';
+      try {
+        const response = await fetch(csvPath + '?v=' + Date.now(), { cache: 'no-store' });
+        if (!response.ok) throw new Error('CSV fetch failed');
+
+        const text = await response.text();
+        const parsed = parseCSV(text);
+        const records = parsed.map((record, index) => ({ ...record, section: (record.section || '').toUpperCase(), _id: 'rec-' + index }));
+        state.records = records;
+        render();
+      } catch (error) {
+        const fallback = `section,category,title,source,date,summary,image,link,tags,featured,eyebrow
+BIO,Intro,"Oscar Manuel Heller",, ,"Writer and editor finishing a B.A. in English at Yale. I report, edit, and tell stories across investigations, culture, sports, and politics.",, ,"writer, editor, yale",,
+CURRENT,Status,"Currently",, ,"Graduating in 2026 and looking for editorial, reporting, and writing roles. Available for freelance.",, ,"freelance, reporting, writing",,
+CURRENT,Investigative,"Lighting Up in the Land of Steady Habits","The New Journal",2026-05-08,"An investigation into New Haven's unlicensed cannabis market: a sample sent to a state lab came back with mold hundreds of times over the legal limit.","https://thenewjournalatyale.com/wp-content/uploads/2026/05/DSCF1900-1800x1200.jpg","https://thenewjournalatyale.com/2026/05/lighting-up-in-the-land-of-steady-habits/","cannabis, investigation, public health",true,"Reporting"
+CURRENT,Culture and Sports,"In a conference not known for athletics, Yale men's basketball is making a name for itself","Yale Daily News",2024-11-05,"A long-form look at how Yale men's basketball built a winner inside a conference that rarely draws attention.","yale_basketball.png","https://yaledailynews.com/blog/2024/11/05/in-a-conference-not-known-for-athletics-yale-mens-basketball-is-making-a-name-for-itself/","basketball, Ivy League, sports",true,"Culture"
+CURRENT,Politics,"Ghosts of Colonialism: Unrest and Political Identity in Peru","The Politic",2023-05-03,"A reported feature on political unrest and identity in Peru, told through the memories of a Peruvian emigre and the long shadow of colonialism.","https://thepolitic.org/wp-content/uploads/2023/05/Cusco-paro-2.jpg","https://thepolitic.org/ghosts-of-colonialism-unrest-and-political-identity-in-peru/","Peru, politics, colonialism",false,"Politics"
+MISC,Column,"Teach(Ed) — my Yale Herald column","The Yale Herald",,"A biweekly column on teaching and being taught.",,"https://yale-herald.com/tag/oscar-heller/","column, teaching",,
+MISC,Reading,"Add a book you love",, ,"Swap in a title and one line on why it stays with you.",,"#","placeholder",,
+MISC,Watch,"Add a clip or video",, ,"Link a short video, talk, or reel you want people to see.",,"#","placeholder",,
+`;
+        state.records = parseCSV(fallback).map((record, index) => ({ ...record, section: (record.section || '').toUpperCase(), _id: 'rec-' + index }));
+        render();
+      }
+    }
+
+    const state = {
+      records: [],
+      filter: 'all',
+      search: ''
+    };
+
+    document.getElementById('searchInput').addEventListener('input', (event) => {
+      state.search = event.target.value;
+      render();
+    });
+
+    loadCsv();
+  </script>
+</body>
+</html>
